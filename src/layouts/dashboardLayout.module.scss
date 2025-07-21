@@ -1,0 +1,43 @@
+
+.layout {
+  display: flex;
+  margin-top: 100px; // matches header height
+}
+
+// Sidebar starts under header
+.sidebar {
+  width: 283px;
+  background-color: white;
+  height: calc(100vh - 100px);
+  border-right: 1px solid #eee;
+  position: sticky;
+  top: 60px;
+  overflow-y: auto;
+}
+
+// Main content area beside sidebar
+.mainContent {
+  flex: 1;
+  padding: 24px;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 60px);
+  overflow: auto;
+  width: calc(100% - 283px);
+  margin-left: 283px;
+  margin-top: 100px;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
