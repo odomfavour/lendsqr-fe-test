@@ -1,11 +1,18 @@
 // UserDetails.jsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './userDetails.module.scss';
 import GeneralDetails from '../components/GeneralDetails';
 import { UserIcon } from '../../../utils/icons';
+import type { User } from '../../../types/user';
+import { Link, useParams } from 'react-router-dom';
+import UserNotFound from '../../../components/UserNotFound/UserNotFound';
+import Spinner from '../../../components/Spinner/Spinner';
 
 const UserDetails = () => {
+  const { id } = useParams();
   const [activeTab, setActiveTab] = useState('General Details');
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const tabs = [
     'General Details',
@@ -16,13 +23,34 @@ const UserDetails = () => {
     'App and System',
   ];
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch(
+          `https://lendsqr-mock-api-kfxn.onrender.com/users/${id}`
+        );
+        const data = await res.json();
+        setUser(data);
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) fetchUser();
+  }, [id]);
+
+  if (loading) return <Spinner />;
+  if (!user) return <UserNotFound />;
+
   return (
     <div className={styles.userDetailsContainer}>
       {/* Header */}
       <div className={styles.header}>
-        <button className={styles.backButton}>
+        <Link to="/users" className={styles.backButton}>
           <span>←</span> Back to Users
-        </button>
+        </Link>
         <div className={styles.headerRight}>
           <h1>User Details</h1>
           <div className={styles.actionButtons}>
@@ -41,7 +69,7 @@ const UserDetails = () => {
             </span>
           </div>
           <div className={styles.userInfo}>
-            <h2>Grace Effiom</h2>
+            <h2>{user?.name}</h2>
             <p>LSQFf587g90</p>
           </div>
         </div>
@@ -77,7 +105,7 @@ const UserDetails = () => {
       {/* Content */}
       <div className={styles.content}>
         {activeTab === 'General Details' ? (
-          <GeneralDetails />
+          <GeneralDetails user={user} />
         ) : (
           <p>No information here yet</p>
         )}

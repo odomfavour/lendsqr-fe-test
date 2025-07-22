@@ -1,72 +1,125 @@
 import { useEffect, useRef, useState } from 'react';
-import { BsThreeDotsVertical } from 'react-icons/bs';
 import {
   ActiveUsers,
   AllUsers,
-  FilterIcon,
   UsersWithLoans,
   UsersWithSavings,
 } from '../../../utils/icons';
 import styles from '../users.module.scss';
-import { Link } from 'react-router-dom';
-
-const userData = [
-  {
-    org: 'Lendsqr',
-    username: 'Adedeji',
-    email: 'adedeji@lendsqr.com',
-    phone: '08078093721',
-    joined: 'May 15, 2020 10:00 AM',
-    status: 'Inactive',
-  },
-  {
-    org: 'Ironrun',
-    username: 'Debby Ogana',
-    email: 'debby2@ironrun.com',
-    phone: '08106780928',
-    joined: 'Apr 30, 2020 10:00 AM',
-    status: 'Pending',
-  },
-  {
-    org: 'Lendstar',
-    username: 'Grace Effiom',
-    email: 'grace@lendstar.com',
-    phone: '07060780922',
-    joined: 'Apr 30, 2020 10:00 AM',
-    status: 'Blacklisted',
-  },
-];
-
-const cardData = [
-  {
-    label: 'USERS',
-    value: '2,453',
-    icon: <AllUsers />,
-    color: 'pink',
-  },
-  {
-    label: 'ACTIVE USERS',
-    value: '2,453',
-    icon: <ActiveUsers />,
-    color: 'purple',
-  },
-  {
-    label: 'USERS WITH LOANS',
-    value: '12,453',
-    icon: <UsersWithLoans />,
-    color: 'orange',
-  },
-  {
-    label: 'USERS WITH SAVINGS',
-    value: '102,453',
-    icon: <UsersWithSavings />,
-    color: 'red',
-  },
-];
+import Pagination from '../../../components/Pagination/Pagination';
+import UsersTable from '../components/UsersTable/UsersTable';
+import type { User } from '../../../types/user';
+import Spinner from '../../../components/Spinner/Spinner';
 
 const UsersList = () => {
-  const dropdownRef = useRef(null);
-  const filterRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const filterRef = useRef<HTMLDivElement | null>(null);
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(5);
+  const [users, setUsers] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const [cardData, setCardData] = useState([
+    {
+      label: 'USERS',
+      value: '2,453',
+      icon: <AllUsers />,
+      color: 'pink',
+    },
+    {
+      label: 'ACTIVE USERS',
+      value: '2,453',
+      icon: <ActiveUsers />,
+      color: 'purple',
+    },
+    {
+      label: 'USERS WITH LOANS',
+      value: '12,453',
+      icon: <UsersWithLoans />,
+      color: 'orange',
+    },
+    {
+      label: 'USERS WITH SAVINGS',
+      value: '102,453',
+      icon: <UsersWithSavings />,
+      color: 'red',
+    },
+  ]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch(
+          `https://lendsqr-mock-api-kfxn.onrender.com/users?_page=${page}&_limit=${limit}`
+        );
+        const data = await res.json();
+
+        const total = res.headers.get('X-Total-Count'); // json-server returns this
+
+        setUsers(data);
+        setTotalItems(Number(total));
+      } catch (err) {
+        console.error('Fetch error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, [page, limit]);
+
+  useEffect(() => {
+    const fetchCounts = async () => {
+      try {
+        const res = await fetch(
+          'https://lendsqr-mock-api-kfxn.onrender.com/users'
+        );
+        const data: User[] = await res.json();
+
+        const total = data.length;
+        const active = data.filter(
+          (person) => person.status === 'Active'
+        ).length;
+        const withLoans = data.filter((person) => person.loan === true).length;
+        const withSavings = data.filter(
+          (person) => person.savings === true
+        ).length;
+
+        setCardData([
+          {
+            label: 'USERS',
+            value: total.toLocaleString(),
+            icon: <AllUsers />,
+            color: 'pink',
+          },
+          {
+            label: 'ACTIVE USERS',
+            value: active.toLocaleString(),
+            icon: <ActiveUsers />,
+            color: 'purple',
+          },
+          {
+            label: 'USERS WITH LOANS',
+            value: withLoans.toLocaleString(),
+            icon: <UsersWithLoans />,
+            color: 'orange',
+          },
+          {
+            label: 'USERS WITH SAVINGS',
+            value: withSavings.toLocaleString(),
+            icon: <UsersWithSavings />,
+            color: 'red',
+          },
+        ]);
+      } catch (err) {
+        console.error('Failed to fetch counts:', err);
+      }
+    };
+
+    fetchCounts();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -95,6 +148,8 @@ const UsersList = () => {
     setActiveDropdown((prev) => (prev === index ? null : index));
   };
 
+  if (loading) return <Spinner />;
+
   return (
     <div className={styles.wrapper}>
       <h2 className={styles.heading}>Users</h2>
@@ -111,122 +166,28 @@ const UsersList = () => {
         ))}
       </div>
 
-      <div className={styles.tableContainer}>
-        {/* Filter Toggle */}
+      <UsersTable
+        users={users}
+        activeDropdown={activeDropdown}
+        toggleDropdown={toggleDropdown}
+        dropdownRef={dropdownRef}
+        activeFilterIndex={activeFilterIndex}
+        setActiveFilterIndex={setActiveFilterIndex}
+        filterRef={filterRef}
+      />
 
-        {/* Filter Form */}
-
-        <table className={styles.userTable}>
-          <thead>
-            <tr>
-              {[
-                'ORGANIZATION',
-                'USERNAME',
-                'EMAIL',
-                'PHONE NUMBER',
-                'DATE JOINED',
-                'STATUS',
-              ].map((title, i) => (
-                <th key={i}>
-                  <div className="">
-                    <div className={styles.titleFlex}>
-                      {title}{' '}
-                      <div className={styles.filterToggle}>
-                        <button
-                          onClick={() =>
-                            setActiveFilterIndex((prev) =>
-                              prev === i ? null : i
-                            )
-                          }
-                          className={styles.filterButton}
-                        >
-                          <FilterIcon />
-                        </button>
-                      </div>
-                    </div>
-                    {activeFilterIndex === i && (
-                      <div ref={filterRef} className={styles.filterForm}>
-                        <form>
-                          <div className={styles.inputBox}>
-                            <label>Organization</label>
-                            <select>
-                              <option>Select</option>
-                            </select>
-                          </div>
-                          <div className={styles.inputBox}>
-                            <label>Username</label>
-                            <input type="text" placeholder="User" />
-                          </div>
-                          <div className={styles.inputBox}>
-                            <label>Email</label>
-                            <input type="email" placeholder="Email" />
-                          </div>
-                          <div className={styles.inputBox}>
-                            <label>Date</label>
-                            <input type="date" />
-                          </div>
-                          <div className={styles.inputBox}>
-                            <label>Phone Number</label>
-                            <input type="tel" placeholder="Phone Number" />
-                          </div>
-                          <div className={styles.inputBox}>
-                            <label>Status</label>
-                            <select>
-                              <option>Select</option>
-                            </select>
-                          </div>
-                          <div className={styles.filterButtons}>
-                            <button type="reset">Reset</button>
-                            <button type="submit">Filter</button>
-                          </div>
-                        </form>
-                      </div>
-                    )}
-                  </div>
-                </th>
-              ))}
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {userData.map((user, idx) => (
-              <tr key={idx}>
-                <td>{user.org}</td>
-                <td>{user.username}</td>
-                <td>{user.email}</td>
-                <td>{user.phone}</td>
-                <td>{user.joined}</td>
-                <td>
-                  <span
-                    className={`${styles.status} ${
-                      styles[user.status.toLowerCase()]
-                    }`}
-                  >
-                    {user.status}
-                  </span>
-                </td>
-                <td className={styles.dropdownCell}>
-                  <div ref={activeDropdown === idx ? dropdownRef : null}>
-                    <BsThreeDotsVertical
-                      role="button"
-                      onClick={() => toggleDropdown(idx)}
-                    />
-                    {activeDropdown === idx && (
-                      <div className={styles.dropdownMenu}>
-                        <Link to={`/users/${user.username}`}>
-                          <button>👁 View Details</button>
-                        </Link>
-                        <button>🚫 Blacklist User</button>
-                        <button>✅ Activate User</button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {totalItems > limit && (
+        <Pagination
+          currentPage={page}
+          totalItems={totalItems ?? 0}
+          itemsPerPage={limit}
+          onPageChange={(newPage) => setPage(newPage)}
+          onLimitChange={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+        />
+      )}
     </div>
   );
 };

@@ -1,0 +1,204 @@
+.tableContainer {
+   background: #fff;
+  padding: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+     @media (max-width: 768px) {
+   overflow-x: auto;
+  }
+
+
+  .userTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 4px;
+  min-width: 900px;
+  // overflow: hidden;
+
+
+
+  thead {
+    background-color: #fff;
+
+    th {
+      text-align: left;
+      padding: 1rem;
+      color: #545f7d;
+      font-size: 12px;
+      
+      
+      .titleFlex {
+        display: flex;
+      gap: 10px;
+      align-items: center;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-top: 1px solid #f1f1f1;
+
+      td {
+        padding: 1rem;
+        font-size: 14px;
+        color: #213f7d;
+      }
+    }
+  }
+}
+}
+
+.status {
+  padding: 4px 8px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-block;
+
+  &.active {
+    background: rgba(57, 205, 204, 0.1);
+    color: #39cdcc;
+  }
+
+  &.inactive {
+    background: rgba(84, 95, 125, 0.1);
+    color: #545f7d;
+  }
+
+  &.pending {
+    background: rgba(233, 178, 0, 0.1);
+    color: #e9b200;
+  }
+
+  &.blacklisted {
+    background: rgba(228, 3, 59, 0.1);
+    color: #e4033b;
+  }
+}
+
+.filterToggle {
+  display: flex;
+  justify-content: flex-end;
+
+  .filterButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+}
+
+.filterForm {
+   position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 10;
+  max-width: 90vw;
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  // background: #fff;
+  // border: 1px solid #ddd;
+  // padding: 30px 20px;
+  // margin-bottom: 1rem;
+  // display: flex;
+  // flex-direction: column;
+  // gap: 1rem;
+  // position: absolute;
+  // width: 270px;
+  //  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  //  border-radius: 4px;
+
+  form {
+    display: grid;
+    gap: 1rem;
+  }
+  .inputBox {
+display: flex;
+flex-direction: column;
+      label {
+    display: block;
+    font-size: 14px;
+    color: #213f7d;
+    margin-bottom: 6px;
+
+   
+  }
+   input,
+    select {
+      padding: 12px 10px;
+      border: 1px solid #213F7D;
+
+      border-radius: 8px;
+      width: 100%;
+    }
+  }
+
+
+
+  .filterButtons {
+    display: flex;
+    gap: 14px;
+
+    button {
+      padding: 11px 30px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+    }
+
+    button[type="reset"] {
+      background-color: white;
+      border: 1px solid #545F7D;
+    }
+
+    button[type="submit"] {
+      background-color: #39cdcc;
+      color: #fff;
+    }
+  }
+}
+
+.dropdownCell {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 1.5rem;
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  border-radius: 6px;
+  overflow: hidden;
+  width: 180px;
+  padding: 20px 0;
+
+  button {
+    display: block;
+    width: 100%;
+    padding: 8px 20px;
+    text-align: left;
+    background: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+
+    &:hover {
+      background: #f9f9f9;
+    }
+  }
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  font-weight: 500;
+  color: #666;
+}
