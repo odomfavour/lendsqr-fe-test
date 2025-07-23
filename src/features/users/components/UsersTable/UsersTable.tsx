@@ -1,7 +1,14 @@
 import styles from './usersTable.module.scss';
 import { BsThreeDotsVertical } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
-import { FilterIcon } from '../../../../utils/icons';
+import {
+  ActivateIcon,
+  BlacklistIcon,
+  EyeICon,
+  FilterIcon,
+} from '../../../../utils/icons';
+import FilterForm from '../FilterForm/FilterForm';
+import type { FilterValues } from '../../../../types/filter-value';
 
 interface User {
   id: number;
@@ -20,7 +27,11 @@ interface UsersTableProps {
   dropdownRef: React.RefObject<HTMLDivElement | null>;
   activeFilterIndex: number | null;
   setActiveFilterIndex: React.Dispatch<React.SetStateAction<number | null>>;
-  filterRef: React.RefObject<HTMLDivElement | null>;
+  filterRefs: React.RefObject<(HTMLDivElement | null)[]>;
+  filters: FilterValues;
+  setFilters: React.Dispatch<React.SetStateAction<FilterValues>>;
+  onFilter: () => void;
+  onReset: () => void;
 }
 
 const UsersTable = ({
@@ -29,15 +40,15 @@ const UsersTable = ({
   toggleDropdown,
   activeFilterIndex,
   setActiveFilterIndex,
-  filterRef,
+  filterRefs,
   dropdownRef,
+  filters,
+  setFilters,
+  onFilter,
+  onReset,
 }: UsersTableProps) => {
   return (
     <div className={styles.tableContainer}>
-      {/* Filter Toggle */}
-
-      {/* Filter Form */}
-
       <table className={styles.userTable}>
         <thead>
           <tr>
@@ -50,7 +61,7 @@ const UsersTable = ({
               'STATUS',
             ].map((title, i) => (
               <th key={i}>
-                <div className="">
+                <div className={styles.headerWrapper}>
                   <div className={styles.titleFlex}>
                     {title}{' '}
                     <div className={styles.filterToggle}>
@@ -67,41 +78,27 @@ const UsersTable = ({
                     </div>
                   </div>
                   {activeFilterIndex === i && (
-                    <div ref={filterRef} className={styles.filterForm}>
-                      <form>
-                        <div className={styles.inputBox}>
-                          <label>Organization</label>
-                          <select>
-                            <option>Select</option>
-                          </select>
-                        </div>
-                        <div className={styles.inputBox}>
-                          <label>Username</label>
-                          <input type="text" placeholder="User" />
-                        </div>
-                        <div className={styles.inputBox}>
-                          <label>Email</label>
-                          <input type="email" placeholder="Email" />
-                        </div>
-                        <div className={styles.inputBox}>
-                          <label>Date</label>
-                          <input type="date" />
-                        </div>
-                        <div className={styles.inputBox}>
-                          <label>Phone Number</label>
-                          <input type="tel" placeholder="Phone Number" />
-                        </div>
-                        <div className={styles.inputBox}>
-                          <label>Status</label>
-                          <select>
-                            <option>Select</option>
-                          </select>
-                        </div>
-                        <div className={styles.filterButtons}>
-                          <button type="reset">Reset</button>
-                          <button type="submit">Filter</button>
-                        </div>
-                      </form>
+                    <div
+                      ref={(el) => {
+                        filterRefs.current[i] = el;
+                        if (el) {
+                          const rect = el.getBoundingClientRect();
+                          const isOverflowing = rect.right > window.innerWidth;
+                          if (isOverflowing) {
+                            el.classList.add(styles['align-right']);
+                          } else {
+                            el.classList.remove(styles['align-right']);
+                          }
+                        }
+                      }}
+                      className={styles.filterForm}
+                    >
+                      <FilterForm
+                        filters={filters}
+                        setFilters={setFilters}
+                        onFilter={onFilter}
+                        onReset={onReset}
+                      />
                     </div>
                   )}
                 </div>
@@ -137,10 +134,25 @@ const UsersTable = ({
                     {activeDropdown === idx && (
                       <div className={styles.dropdownMenu}>
                         <Link to={`/users/${user.id}`}>
-                          <button>👁 View Details</button>
+                          <button>
+                            <span>
+                              <EyeICon />
+                            </span>
+                            View Details
+                          </button>
                         </Link>
-                        <button>🚫 Blacklist User</button>
-                        <button>✅ Activate User</button>
+                        <button>
+                          <span>
+                            <BlacklistIcon />
+                          </span>
+                          Blacklist User
+                        </button>
+                        <button>
+                          <span>
+                            <ActivateIcon />
+                          </span>
+                          Activate User
+                        </button>
                       </div>
                     )}
                   </div>

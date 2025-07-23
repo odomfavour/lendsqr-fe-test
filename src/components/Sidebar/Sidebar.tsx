@@ -8,6 +8,7 @@ import {
   DecisonsIcon,
   FeesIcon,
   GuarantorsIcon,
+  HomeIcon,
   KarmaIcon,
   LoanRequestIcon,
   LoansIcon,
@@ -117,7 +118,7 @@ const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
             }
           >
             <span>
-              <BriefCase />
+              <HomeIcon />
             </span>
             Dashboard
           </NavLink>

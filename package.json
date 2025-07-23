@@ -11,10 +11,13 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.83.0",
+    "install": "^0.13.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.7.0",
+    "react-toastify": "^11.0.5",
+    "renpm": "^0.0.6",
     "sass": "^1.89.2"
   },
   "devDependencies": {

@@ -4,23 +4,40 @@ import { BellIcon } from '../../utils/icons';
 import { FaBars, FaSearch } from 'react-icons/fa';
 import { GoTriangleDown } from 'react-icons/go';
 import { useEffect, useRef, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 interface HeaderProps {
   onToggleSidebar?: () => void;
 }
 
 const Header = ({ onToggleSidebar }: HeaderProps) => {
+  const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [userName, setUserName] = useState('User');
 
   const toggleDropdown = () => {
     setDropdownOpen((prev) => !prev);
   };
 
   const handleLogout = () => {
-    console.log('Logging out...');
-    // redirect or clear auth here
+    localStorage.removeItem('lendsqr-token');
+    toast.info('You have been logged out');
+    navigate('/login');
   };
+
+  useEffect(() => {
+    const email = localStorage.getItem('lendsqr-user-email');
+    if (email) {
+      const nameFromEmail = email.split('@')[0].replace(/\./g, ' ');
+      const capitalized = nameFromEmail
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      setUserName(capitalized);
+    }
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -34,6 +51,7 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
   return (
     <div className={styles.headerWrapper}>
       <header className={styles.header}>
@@ -50,10 +68,12 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
           </button>
         </div>
         <div className={styles.right}>
-          <a href="#" className={styles.docs}>
+          <Link to="#" className={styles.docs}>
             Docs
-          </a>
-          <BellIcon />
+          </Link>
+          <span role="button">
+            <BellIcon />
+          </span>
           <div
             ref={dropdownRef}
             className={styles.userWrapper}
@@ -64,12 +84,12 @@ const Header = ({ onToggleSidebar }: HeaderProps) => {
                 src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=200&fit=crop"
                 alt="avatar"
               />
-              <span>Adedeji</span>
+              <span>{userName}</span>
               <GoTriangleDown />
             </div>
             {dropdownOpen && (
               <div className={styles.dropdownMenu}>
-                <p className={styles.userName}>Adedeji</p>
+                <p className={styles.userName}>{userName}</p>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             )}

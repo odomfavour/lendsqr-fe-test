@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActiveUsers,
   AllUsers,
@@ -10,15 +10,25 @@ import Pagination from '../../../components/Pagination/Pagination';
 import UsersTable from '../components/UsersTable/UsersTable';
 import type { User } from '../../../types/user';
 import Spinner from '../../../components/Spinner/Spinner';
+import type { FilterValues } from '../../../types/filter-value';
 
 const UsersList = () => {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
-  const filterRef = useRef<HTMLDivElement | null>(null);
+  // const filterRef = useRef<HTMLDivElement | null>(null);
+  const filterRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(5);
-  const [users, setUsers] = useState([]);
+  const [limit, setLimit] = useState(10);
+  const [users, setUsers] = useState<User[]>([]);
   const [totalItems, setTotalItems] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [filters, setFilters] = useState<FilterValues>({
+    organization: '',
+    username: '',
+    email: '',
+    date: '',
+    phone: '',
+    status: '',
+  });
 
   const [cardData, setCardData] = useState([
     {
@@ -47,16 +57,15 @@ const UsersList = () => {
     },
   ]);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
+  const fetchUsers = useCallback(
+    async (queryParams = '') => {
       setLoading(true);
       try {
         const res = await fetch(
-          `https://lendsqr-mock-api-kfxn.onrender.com/users?_page=${page}&_limit=${limit}`
+          `https://lendsqr-mock-api-kfxn.onrender.com/users?_page=${page}&_limit=${limit}${queryParams}`
         );
         const data = await res.json();
-
-        const total = res.headers.get('X-Total-Count'); // json-server returns this
+        const total = res.headers.get('X-Total-Count');
 
         setUsers(data);
         setTotalItems(Number(total));
@@ -65,10 +74,40 @@ const UsersList = () => {
       } finally {
         setLoading(false);
       }
-    };
+    },
+    [page, limit]
+  );
 
-    fetchUsers();
-  }, [page, limit]);
+  const handleFilter = () => {
+    const query = new URLSearchParams();
+
+    if (filters.organization)
+      query.append('organization', filters.organization);
+    if (filters.username) query.append('username', filters.username);
+    if (filters.email) query.append('email', filters.email);
+    if (filters.date) query.append('joined_like', filters.date); // assuming date is partial
+    if (filters.phone) query.append('phone_like', filters.phone);
+    if (filters.status) query.append('status', filters.status);
+
+    setPage(1); // reset to page 1 on new filter
+    fetchUsers(`&${query.toString()}`);
+
+    // Close filter UI
+    setActiveFilterIndex(null);
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      organization: '',
+      username: '',
+      email: '',
+      date: '',
+      phone: '',
+      status: '',
+    });
+    setPage(1);
+    fetchUsers(); // fetch without any query
+  };
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -122,22 +161,26 @@ const UsersList = () => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const dropdownElement = dropdownRef.current as HTMLElement | null;
-      const filterElement = filterRef.current as HTMLElement | null;
+    fetchUsers();
+  }, [fetchUsers]);
 
-      if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-        setActiveDropdown(null);
-      }
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const dropdownElement = dropdownRef.current as HTMLElement | null;
+  //     const filterElement = filterRef.current as HTMLElement | null;
 
-      if (filterElement && !filterElement.contains(event.target as Node)) {
-        setActiveFilterIndex(null);
-      }
-    };
+  //     if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
+  //       setActiveDropdown(null);
+  //     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  //     if (filterElement && !filterElement.contains(event.target as Node)) {
+  //       setActiveFilterIndex(null);
+  //     }
+  //   };
+
+  //   document.addEventListener('mousedown', handleClickOutside);
+  //   return () => document.removeEventListener('mousedown', handleClickOutside);
+  // }, []);
 
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [activeFilterIndex, setActiveFilterIndex] = useState<number | null>(
@@ -147,6 +190,23 @@ const UsersList = () => {
   const toggleDropdown = (index: number) => {
     setActiveDropdown((prev) => (prev === index ? null : index));
   };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        activeFilterIndex !== null &&
+        filterRefs.current[activeFilterIndex] &&
+        !filterRefs.current[activeFilterIndex]?.contains(event.target as Node)
+      ) {
+        setActiveFilterIndex(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activeFilterIndex]);
 
   if (loading) return <Spinner />;
 
@@ -173,7 +233,11 @@ const UsersList = () => {
         dropdownRef={dropdownRef}
         activeFilterIndex={activeFilterIndex}
         setActiveFilterIndex={setActiveFilterIndex}
-        filterRef={filterRef}
+        filterRefs={filterRefs}
+        filters={filters}
+        setFilters={setFilters}
+        onFilter={handleFilter}
+        onReset={resetFilters}
       />
 
       {totalItems > limit && (

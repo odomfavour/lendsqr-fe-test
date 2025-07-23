@@ -6,6 +6,7 @@ import UsersList from '../features/users/pages/UsersList';
 import DashboardLayout from '../layouts/DashboardLayout';
 import UserDetails from '../features/users/pages/UserDetails';
 import NotFound from '../pages/NotFound';
+import PrivateRoute from '../components/PrivateRoute/PrivateRoute';
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +25,12 @@ export const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <DashboardLayout />, // DashboardLayout
+    element: (
+      <PrivateRoute>
+        <DashboardLayout />
+      </PrivateRoute>
+    ),
+
     children: [
       {
         path: 'users',
