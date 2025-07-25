@@ -1,55 +1,54 @@
-.tableContainer {
-   background: #fff;
-  padding: 30px;
-   font-family: "Work Sans", sans-serif;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-     @media (max-width: 768px) {
-   overflow-x: auto;
-  }
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
 
+.tableContainer {
+  background: #fff;
+  padding: 30px;
+  font-family: $font-family;
+  @include card-shadow;
+
+  @media (max-width: 768px) {
+    overflow-x: auto;
+  }
 
   .userTable {
-  width: 100%;
-  border-collapse: collapse;
-  background: #fff;
-  border-radius: 4px;
-  min-width: 900px;
-  // overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 4px;
+    min-width: 900px;
 
+    thead {
+      background-color: #fff;
+      position: relative;
 
+      th {
+        text-align: left;
+        padding: 20px 0;
+        color: $text-color;
+        font-size: 12px;
 
-  thead {
-    background-color: #fff;
-     position: relative;
+        .titleFlex {
+          display: flex;
+          gap: 10px;
+          align-items: center;
+        }
+      }
+    }
 
-    th {
-      text-align: left;
-      padding: 20px 0;
-      color: #545f7d;
-      font-size: 12px;
-      
-      
-      .titleFlex {
-        display: flex;
-      gap: 10px;
-      align-items: center;
+    tbody {
+      tr {
+        border-top: 1px solid #f1f1f1;
+
+        td {
+          padding: 20px 10px 20px 0;
+          font-size: 14px;
+          font-weight: 400;
+          color: $text-color;
+        }
       }
     }
   }
-
-  tbody {
-    tr {
-      border-top: 1px solid #f1f1f1;
-
-      td {
-        padding: 20px 10px 20px 0;
-        font-size: 14px;
-        font-weight: 400;
-        color: #545F7D;
-      }
-    }
-  }
-}
 }
 
 .status {
@@ -61,13 +60,13 @@
   display: inline-block;
 
   &.active {
-    background: rgba(57, 205, 204, 0.1);
+    background: rgba($primary-color, 0.1);
     color: #39CD62;
   }
 
   &.inactive {
-    background: rgba(84, 95, 125, 0.1);
-    color: #545f7d;
+    background: rgba($text-color, 0.1);
+    color: $text-color;
   }
 
   &.pending {
@@ -93,12 +92,12 @@
 }
 
 .headerWrapper {
-  position: relative; // anchor point for absolute .filterForm
+  position: relative;
   display: inline-block;
 }
 
 .filterForm {
-   position: absolute;
+  position: absolute;
   top: 100%;
   left: 0;
   z-index: 10;
@@ -108,14 +107,12 @@
   border: 1px solid #ddd;
   padding: 20px;
   border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  
-   &.align-right {
+  @include card-shadow;
+
+  &.align-right {
     left: auto;
     right: 0;
   }
-
- 
 }
 
 .dropdownCell {
@@ -126,7 +123,7 @@
   position: absolute;
   top: 1.5rem;
   right: 0;
-  background: white;
+  background: #fff;
   border: 1px solid #ddd;
   box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
   z-index: 10;
@@ -134,7 +131,7 @@
   overflow: hidden;
   width: 180px;
   padding: 20px 0;
-   font-family: "Work Sans", sans-serif;
+  font-family: $font-family;
 
   a {
     text-decoration: none;
@@ -151,7 +148,7 @@
     display: flex;
     gap: 8px;
     align-items: center;
-     font-family: "Work Sans", sans-serif;
+    font-family: $font-family;
 
     &:hover {
       background: #f9f9f9;

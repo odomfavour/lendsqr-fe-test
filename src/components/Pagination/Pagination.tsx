@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Pagination.module.scss';
+import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 interface PaginationProps {
   currentPage: number;
@@ -61,18 +62,19 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
+          className={`${styles.navBtn} ${
+            currentPage === 1 ? styles.disabled : styles.activeChevron
+          }`}
         >
-          &lt;
+          <FiChevronLeft />
         </button>
 
         {pageNumbers().map((num, index) =>
           typeof num === 'number' ? (
-            <button
-              key={index}
-              className={num === currentPage ? styles.active : ''}
-              onClick={() => onPageChange(num)}
-            >
-              {num}
+            <button key={index} onClick={() => onPageChange(num)}>
+              <span className={num === currentPage ? styles.activeText : ''}>
+                {num}
+              </span>
             </button>
           ) : (
             <span key={`dots-${index}`} className={styles.dots}>
@@ -84,8 +86,11 @@ const Pagination: React.FC<PaginationProps> = ({
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
+          className={`${styles.navBtn} ${
+            currentPage === totalPages ? styles.disabled : styles.activeChevron
+          }`}
         >
-          &gt;
+          <FiChevronRight />
         </button>
       </div>
     </div>

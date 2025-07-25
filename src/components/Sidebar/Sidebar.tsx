@@ -1,4 +1,3 @@
-// src/components/Sidebar/Sidebar.tsx
 import { NavLink } from 'react-router-dom';
 import styles from './sidebar.module.scss';
 import { FaChevronDown } from 'react-icons/fa';
@@ -94,12 +93,7 @@ const sections = [
 const Sidebar = ({ isOpen }: { isOpen: boolean }) => {
   return (
     <>
-      {/* Hamburger icon for small screens */}
-
       <aside className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
-        {/* <button className={styles.hamburger} onClick={toggleSidebar}>
-          {isOpen ? <FaTimes /> : <FaBars />}
-        </button> */}
         <div className={styles.switchOrg}>
           <span>
             <BriefCase />

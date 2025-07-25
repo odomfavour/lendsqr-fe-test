@@ -1,9 +1,9 @@
-import './spinner.scss';
+import styles from './spinner.module.scss';
 
 const Spinner = () => {
   return (
-    <div className="spinner-overlay">
-      <div className="spinner"></div>
+    <div data-testid="spinner" className={styles.spinnerOverlay}>
+      <div className={styles.spinner}></div>
     </div>
   );
 };

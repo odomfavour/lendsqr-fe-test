@@ -14,6 +14,11 @@
   color: #3a3a3a;
 }
 
+.activeText {
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
 .limitDisplay select {
   padding: 0.4rem 0.6rem;
   border: 1px solid #ddd;
@@ -42,6 +47,28 @@
 
 .pagination button:hover {
   background: #e5e7eb;
+}
+
+.pagination .navBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: none;
+  background: #e5e7eb;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.activeChevron:hover {
+  background-color: #e5e7eb;
+  color: #1e3a8a;
+}
+
+.pagination .navBtn:hover:not(:disabled) {
+  background: #d1d5db; 
 }
 
 .pagination button:disabled {

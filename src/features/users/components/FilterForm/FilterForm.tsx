@@ -14,14 +14,16 @@ const FilterForm = ({
 }) => {
   return (
     <form
+      className={styles.filterForm}
       onSubmit={(e) => {
         e.preventDefault();
         onFilter();
       }}
     >
       <div className={styles.inputBox}>
-        <label>Organization</label>
+        <label htmlFor="organization">Organization</label>
         <input
+          id="organization"
           type="text"
           value={filters.organization}
           onChange={(e) =>
@@ -30,8 +32,9 @@ const FilterForm = ({
         />
       </div>
       <div className={styles.inputBox}>
-        <label>Username</label>
+        <label htmlFor="name">Username</label>
         <input
+          id="name"
           type="text"
           value={filters.username}
           onChange={(e) =>
@@ -40,8 +43,9 @@ const FilterForm = ({
         />
       </div>
       <div className={styles.inputBox}>
-        <label>Email</label>
+        <label htmlFor="email">Email</label>
         <input
+          id="email"
           type="email"
           value={filters.email}
           onChange={(e) =>

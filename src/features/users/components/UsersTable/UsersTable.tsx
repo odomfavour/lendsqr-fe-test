@@ -72,6 +72,7 @@ const UsersTable = ({
                           )
                         }
                         className={styles.filterButton}
+                        data-testid={`filter-toggle-${i}`}
                       >
                         <FilterIcon />
                       </button>
