@@ -40,7 +40,7 @@
 
 ---
 
-## ⚙️ Getting Started
+## Getting Started
 
 ### Clone the repo:
 

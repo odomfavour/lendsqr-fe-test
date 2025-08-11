@@ -9,7 +9,6 @@ const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
 
-  // 👇 Close sidebar when route changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);

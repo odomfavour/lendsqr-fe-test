@@ -83,9 +83,9 @@ const UsersList = () => {
 
     if (filters.organization)
       query.append('organization', filters.organization);
-    if (filters.username) query.append('username', filters.username);
+    if (filters.username) query.append('name', filters.username);
     if (filters.email) query.append('email', filters.email);
-    if (filters.date) query.append('joined_like', filters.date); // assuming date is partial
+    if (filters.date) query.append('joined_like', filters.date);
     if (filters.phone) query.append('phone_like', filters.phone);
     if (filters.status) query.append('status', filters.status);
 
@@ -163,24 +163,6 @@ const UsersList = () => {
   useEffect(() => {
     fetchUsers();
   }, [fetchUsers]);
-
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const dropdownElement = dropdownRef.current as HTMLElement | null;
-  //     const filterElement = filterRef.current as HTMLElement | null;
-
-  //     if (dropdownElement && !dropdownElement.contains(event.target as Node)) {
-  //       setActiveDropdown(null);
-  //     }
-
-  //     if (filterElement && !filterElement.contains(event.target as Node)) {
-  //       setActiveFilterIndex(null);
-  //     }
-  //   };
-
-  //   document.addEventListener('mousedown', handleClickOutside);
-  //   return () => document.removeEventListener('mousedown', handleClickOutside);
-  // }, []);
 
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [activeFilterIndex, setActiveFilterIndex] = useState<number | null>(
